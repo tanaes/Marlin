@@ -139,9 +139,15 @@ const uint8_t adc_pins[] = {
   #if HAS_JOY_ADC_Z
     JOY_Z_PIN,
   #endif
+  #if ENABLED(POWER_MONITOR_CURRENT)
+    POWER_MONITOR_CURRENT_PIN,
+  #endif
+  #if ENABLED(POWER_MONITOR_VOLTAGE)
+    POWER_MONITOR_VOLTAGE_PIN,
+  #endif
 };
 
-enum TEMP_PINS : char {
+enum TempPinIndex : char {
   #if HAS_TEMP_ADC_0
     TEMP_0,
   #endif
@@ -186,6 +192,12 @@ enum TEMP_PINS : char {
   #endif
   #if HAS_JOY_ADC_Z
     JOY_Z,
+  #endif
+  #if ENABLED(POWER_MONITOR_CURRENT)
+    POWERMON_CURRENT,
+  #endif
+  #if ENABLED(POWER_MONITOR_VOLTAGE)
+    POWERMON_VOLTS,
   #endif
   ADC_PIN_COUNT
 };
@@ -265,9 +277,8 @@ void HAL_clear_reset_source() { }
 
 /**
  * TODO: Check this and change or remove.
- * currently returns 1 that's equal to poweron reset.
  */
-uint8_t HAL_get_reset_source() { return 1; }
+uint8_t HAL_get_reset_source() { return RST_POWER_ON; }
 
 void _delay_ms(const int delay_ms) { delay(delay_ms); }
 
@@ -323,7 +334,8 @@ void HAL_adc_init() {
 }
 
 void HAL_adc_start_conversion(const uint8_t adc_pin) {
-  TEMP_PINS pin_index;
+  //TEMP_PINS pin_index;
+  TempPinIndex pin_index;
   switch (adc_pin) {
     default: return;
     #if HAS_TEMP_ADC_0
@@ -370,6 +382,12 @@ void HAL_adc_start_conversion(const uint8_t adc_pin) {
     #endif
     #if ENABLED(ADC_KEYPAD)
       case ADC_KEYPAD_PIN: pin_index = ADC_KEY; break;
+    #endif
+    #if ENABLED(POWER_MONITOR_CURRENT)
+      case POWER_MONITOR_CURRENT_PIN: pin_index = POWERMON_CURRENT; break;
+    #endif
+    #if ENABLED(POWER_MONITOR_VOLTAGE)
+      case POWER_MONITOR_VOLTAGE_PIN: pin_index = POWERMON_VOLTS; break;
     #endif
   }
   HAL_adc_result = (HAL_adc_results[(int)pin_index] >> 2) & 0x3FF; // shift to get 10 bits only.
