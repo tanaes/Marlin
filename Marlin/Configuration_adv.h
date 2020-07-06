@@ -1697,7 +1697,7 @@
 
     #define PTC_SAMPLE_START  30.0f
     #define PTC_SAMPLE_RES    5.0f
-    #define PTC_SAMPLE_COUNT  8U
+    #define PTC_SAMPLE_COUNT  6U
 
     // Bed temperature calibration builds a similar table.
 
